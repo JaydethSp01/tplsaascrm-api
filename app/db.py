@@ -1,1 +1,12 @@
-import os; import psycopg; from psycopg.rows import dict_row; DATABASE_URL = os.environ.get('DATABASE_URL'); conn = psycopg.connect(DATABASE_URL, row_factory=dict_row) if DATABASE_URL else None
+import os
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+
+DATABASE_URL = os.environ.get("DATABASE_URL")
+
+engine = create_engine(
+    DATABASE_URL or "sqlite:///:memory:", connect_args={"check_same_thread": False}
+)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
