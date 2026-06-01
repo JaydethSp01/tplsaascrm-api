@@ -1,14 +1,21 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import os
-from app.routers import leads, oportunidades, contactos, actividades
+
 app = FastAPI()
+
 origins = os.environ.get("CORS_ORIGINS", "*").split(",")
-app.add_middleware(CORSMiddleware, allow_origins=origins, allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
-app.include_router(leads.router)
-app.include_router(oportunidades.router)
-app.include_router(contactos.router)
-app.include_router(actividades.router)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 @app.get("/health")
 async def health_check():
-    return {"status": "ok"}
+    return {"status": "healthy"}
+
+# Include routers here
