@@ -4,10 +4,10 @@ router = APIRouter()
 
 @router.get("/dashboard")
 async def get_dashboard_metrics():
-    # Simulación de métricas
+    # Simulating some metrics for demonstration purposes
     metrics = {
-        "totalLeads": 100,
-        "totalOportunidades": 50,
-        "conversionRate": 20.0
+        "leads": 50,
+        "oportunidades": 20,
+        "conversionRate": 40.0  # This would be calculated based on real data
     }
     return metrics
