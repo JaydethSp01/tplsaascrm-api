@@ -1,40 +1,47 @@
 from fastapi import APIRouter, HTTPException
-from typing import List
 from pydantic import BaseModel
+from typing import List
 
 router = APIRouter()
 
 class Oportunidad(BaseModel):
     id: int
-    description: str
-    stage: str
+    nombre: str
+    valor: float
+    etapa: str
 
-database = [
-    Oportunidad(id=1, description="Oportunidad A", stage="Inicial"),
-    Oportunidad(id=2, description="Oportunidad B", stage="Negociación")
+oportunidades_db = [
+    Oportunidad(id=1, nombre="Oportunidad A", valor=10000.0, etapa="Inicial"),
+    Oportunidad(id=2, nombre="Oportunidad B", valor=20000.0, etapa="Propuesta"),
 ]
 
 @router.get("/oportunidades", response_model=List[Oportunidad])
 async def get_oportunidades():
-    return database
+    return oportunidades_db
 
 @router.post("/oportunidades", response_model=Oportunidad)
 async def create_oportunidad(oportunidad: Oportunidad):
-    database.append(oportunidad)
+    oportunidades_db.append(oportunidad)
     return oportunidad
 
-@router.put("/oportunidades/{oportunidad_id}", response_model=Oportunidad)
-async def update_oportunidad(oportunidad_id: int, oportunidad: Oportunidad):
-    for idx, existing_oportunidad in enumerate(database):
-        if existing_oportunidad.id == oportunidad_id:
-            database[idx] = oportunidad
+@router.get("/oportunidades/{oportunidad_id}", response_model=Oportunidad)
+async def get_oportunidad(oportunidad_id: int):
+    for oportunidad in oportunidades_db:
+        if oportunidad.id == oportunidad_id:
             return oportunidad
     raise HTTPException(status_code=404, detail="Oportunidad not found")
 
-@router.delete("/oportunidades/{oportunidad_id}")
-async def delete_oportunidad(oportunidad_id: int):
-    for idx, existing_oportunidad in enumerate(database):
+@router.put("/oportunidades/{oportunidad_id}", response_model=Oportunidad)
+async def update_oportunidad(oportunidad_id: int, oportunidad: Oportunidad):
+    for index, existing_oportunidad in enumerate(oportunidades_db):
         if existing_oportunidad.id == oportunidad_id:
-            del database[idx]
-            return {"message": "Oportunidad deleted"}
+            oportunidades_db[index] = oportunidad
+            return oportunidad
+    raise HTTPException(status_code=404, detail="Oportunidad not found")
+
+@router.delete("/oportunidades/{oportunidad_id}", response_model=Oportunidad)
+async def delete_oportunidad(oportunidad_id: int):
+    for index, oportunidad in enumerate(oportunidades_db):
+        if oportunidad.id == oportunidad_id:
+            return oportunidades_db.pop(index)
     raise HTTPException(status_code=404, detail="Oportunidad not found")
